@@ -2,67 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from './config';
 import logo from './logo.svg';
 import './App.css';
+import PlanetsList from './components/PlanetsList';
 
 function App() {
-  const [planets, setPlanets] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [waking, setWaking] = useState(true);
 
   useEffect(() => {
-    const fetchPlanets = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(API_URL);
-        const { data } = await response.json();
-        setError(null);
-        setPlanets(data);
-        setLoading(false);
-      } catch (error) {
-        if (error.message === 'Unexpected end of JSON input') {
-          setError('Invalid API endpoint :/')
-        } else {
-          setError(error.message);
-        }
-        setLoading(false);
-      }
-    }
-    const fetchData = async () => {
+    const wakeUpServer = async () => {
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
           body: JSON.stringify({ wakeUp: true }),
           headers: {
             'Content-Type': 'application/json',
-          }
+          },
         });
         const json = await response.json();
         try {
           const { wakingUp } = json.data;
           if (wakingUp) {
             setWaking(false);
-            fetchPlanets();
           }
         } catch (err) {
           setError(err.message);
+          setWaking(false);
         }
-      } catch(error) {
+      } catch (error) {
         setError(error.message);
+        setWaking(false);
       }
-    }
-    fetchData();
+    };
+
+    wakeUpServer();
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        {error && <p style={{color: "red"}}>{error}</p>}
-        {loading && 'Loading...'}
-        {waking && 'Waking server up...'}
-        <ul style={{padding: 0, textAlign: 'left'}}>
-          {planets.length > 0 && planets.map(planet => <li key={planet.name}>{planet.name} - {planet.terrain}</li>)}
-        </ul>
+        {error && <p className="error">{error}</p>}
+        {waking ? (
+          <p className="waking-up">{'Waking server up...'}</p>
+        ) : (
+          <PlanetsList url={API_URL} />
+        )}
       </header>
     </div>
   );
