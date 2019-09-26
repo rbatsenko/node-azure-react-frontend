@@ -1,9 +1,8 @@
 import React from 'react';
 import useFetchPlanets from '../hooks/useFetchPlanets';
-import { API_URL } from '../config';
 
-export default function PlanetsList({ url }) {
-  const [{ planets, isLoading, isError }] = useFetchPlanets(API_URL);
+export default function PlanetsList({ apiUrl }) {
+  const [{ planets, isLoading, isError }] = useFetchPlanets(apiUrl);
 
   if (isError) {
     return <p className="error">Something went wrong...</p>;
