@@ -3,7 +3,6 @@ import { API_URL } from './config';
 import logo from './logo.svg';
 import './App.css';
 import PlanetsList from './components/PlanetsList';
-import Text from './components/Text';
 
 function App() {
   const [error, setError] = useState(null);
@@ -48,7 +47,6 @@ function App() {
         ) : (
           <PlanetsList apiUrl={API_URL} />
         )}
-        <Text />
       </header>
     </div>
   );
